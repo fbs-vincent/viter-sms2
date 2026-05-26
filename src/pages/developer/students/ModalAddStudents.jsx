@@ -6,6 +6,7 @@ import ModalWrapperSide from "../../../partials/modal/ModalWrapperSide";
 import { FaTimesCircle } from "react-icons/fa";
 import { Form, Formik } from "formik";
 import { InputText } from "../../../functions/FormInputs";
+import * as Yup from "yup";
 
 const ModalAddStudents = ({ itemEdit, setIsOpen }) => {
   // THIS IS TO ANIMATE THE MODAL STATE
@@ -17,7 +18,7 @@ const ModalAddStudents = ({ itemEdit, setIsOpen }) => {
   const mutation = useMutation({
     mutationFn: async (values) =>
       queryData(
-        `${apiVersion}/controller/developer/students.php`, // CREATE
+        `${apiVersion}/controllers/developer/students/students.php`, // CREATE
         "post", // POST = CREATE
         values, // THE DATA TO BE SENT
       ),
@@ -34,6 +35,26 @@ const ModalAddStudents = ({ itemEdit, setIsOpen }) => {
       //   THIS IS TO REFETCH THE DATA AFTER UPDATE OR CREATE
       queryClient.invalidateQueries(["students"]);
     },
+  });
+
+  // THIS IS FOR THE INITIAL VALUES IN THE MODAL
+  const initVal = {
+    students_id: "",
+    students_first_name: "",
+    students_middle_name: "",
+    students_last_name: "",
+    students_grade: "",
+    students_section: "",
+  };
+
+  // THIS CODE IS FOR VALIDATION IN THE FORM FIELD
+  const yupSchema = Yup.object({
+    students_id: Yup.string().trim().required("Required."),
+    students_first_name: Yup.string().trim().required("Required."),
+    students_middle_name: Yup.string().trim().required("Required."),
+    students_last_name: Yup.string().trim().required("Required."),
+    students_grade: Yup.string().trim().required("Required."),
+    students_section: Yup.string().trim().required("Required."),
   });
 
   //   THIS IS THE FUNCTION TO CLOSE THE MODAL
@@ -69,20 +90,79 @@ const ModalAddStudents = ({ itemEdit, setIsOpen }) => {
         </div>
         <div className="modal-body">
           <Formik
-            initialValues={{}}
-            validationSchema={null}
-            onSubmit={() => {}}
+            initialValues={initVal}
+            validationSchema={yupSchema}
+            onSubmit={async (values, { setSubmitting, resetForm }) => {
+              mutation.mutate(values);
+            }}
           >
             {(props) => {
               return (
-                <Form>
-                  <div className="relative mb-6">
-                    <InputText
-                      label="Student ID"
-                      name="students_id"
-                      disabled={mutation.isPending}
-                    />
-                    {/* <InputText label="Student ID" name="students_id /> */}
+                <Form className="h-full">
+                  <div className="modal-form-container">
+                    <div className="modal-container">
+                      {" "}
+                      <div className="relative mb-6">
+                        <InputText
+                          label="Student ID"
+                          name="students_id"
+                          disabled={mutation.isPending}
+                        />
+                      </div>
+                      <div className="relative mb-6">
+                        <InputText
+                          label="First Name"
+                          name="students_first_name"
+                          disabled={mutation.isPending}
+                        />
+                      </div>
+                      <div className="relative mb-6">
+                        <InputText
+                          label="Middle Name"
+                          name="students_middle_name"
+                          disabled={mutation.isPending}
+                        />
+                      </div>
+                      <div className="relative mb-6">
+                        <InputText
+                          label="Last Name"
+                          name="students_last_name"
+                          disabled={mutation.isPending}
+                        />
+                      </div>
+                      <div className="relative mb-6">
+                        <InputText
+                          label="Grade"
+                          name="students_grade"
+                          disabled={mutation.isPending}
+                        />
+                      </div>
+                      <div className="relative mb-6">
+                        <InputText
+                          label="Section"
+                          name="students_section"
+                          disabled={mutation.isPending}
+                        />
+                      </div>
+                    </div>
+                    <div className="modal-action">
+                      {" "}
+                      <button
+                        type="submit"
+                        disabled={mutation.isPending || !props.dirty}
+                        className="btn-modal-submit"
+                      >
+                        Add
+                      </button>
+                      <button
+                        type="reset"
+                        onClick={handleClose}
+                        disabled={mutation.isPending}
+                        className="btn-modal-cancel"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 </Form>
               );

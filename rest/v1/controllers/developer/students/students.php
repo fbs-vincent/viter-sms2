@@ -1,11 +1,11 @@
 <?php
 
 // REQUIRE TO ACCEPT JSON DATA
-require_once "../../core/header.php";
+require_once "../../../core/header.php";
 // REQUIRE NEEDED FUNCTIONS
-require_once "../../core/functions.php";
+require_once "../../../core/functions.php";
 // REQUIRE THE MODEL CLASSES
-require_once "../../models/Students.php";
+require_once "../../../models/developer/students/Students.php";
 // GET PAYLOAD FROM FRONTEND
 $body = file_get_contents("php://input");
 $data = json_decode($body, true);
