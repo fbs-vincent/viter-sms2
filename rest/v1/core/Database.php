@@ -6,13 +6,13 @@
 
 class Database
 {
-    private $dbConnection;
+    private static $dbConnection;
 
     public static function connectDb()
     {
         // LOCAL CONFIGURATION
         $host = "localhost";
-        $dbName = "viter-sms-v1";
+        $dbName = "viter_sms_v1";
         $username = "root";
         $password = "";
 

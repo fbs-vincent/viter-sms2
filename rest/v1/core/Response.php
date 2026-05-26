@@ -32,14 +32,14 @@ class Response
     // THIS FUNCTION SEND THE RESPONSE TO THE UI/FRONTEND CLIENT
     public function send()
     {
-        header('Content-type:application/json');
+        header('Content-Type:application/json');
 
         if ($this->_toCache == true) {
             header("Cache-Control: max-age=60");
         } else {
             header("Cache-Control: no-cache, no-store");
         }
-        $this->_responseData == $this->_data;
+        $this->_responseData = $this->_data;
 
         echo json_encode($this->_responseData);
     }

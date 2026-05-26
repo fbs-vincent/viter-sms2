@@ -7,10 +7,12 @@ import { FaTimesCircle } from "react-icons/fa";
 import { Form, Formik } from "formik";
 import { InputText } from "../../../functions/FormInputs";
 import * as Yup from "yup";
+import ButtonSpinner from "../../../partials/spinners/ButtonSpinner";
 
 const ModalAddStudents = ({ itemEdit, setIsOpen }) => {
   // THIS IS TO ANIMATE THE MODAL STATE
   const [animate, setAnimate] = React.useState("translate-x-full");
+  console.log(itemEdit);
 
   //   THIS IS TO REFETCH THE READING DATA WHEN UPDATE IS HAPPENING
   const queryClient = useQueryClient();
@@ -18,14 +20,16 @@ const ModalAddStudents = ({ itemEdit, setIsOpen }) => {
   const mutation = useMutation({
     mutationFn: async (values) =>
       queryData(
-        `${apiVersion}/controllers/developer/students/students.php`, // CREATE
-        "post", // POST = CREATE
+        itemEdit
+          ? `${apiVersion}/controllers/developer/students/students.php?id=${itemEdit.students_aid}` // UPDATE
+          : `${apiVersion}/controllers/developer/students/students.php`, // CREATE
+        itemEdit ? "put" : "post", // POST = CREATE
         values, // THE DATA TO BE SENT
       ),
     onSuccess: (data) => {
       if (data.success) {
         // IF SUCCESS SHOW THE MESSAGE
-        alert("Successfuly added.");
+        alert(`Successfully ${itemEdit ? "Updated" : "Added"}.`);
         setIsOpen(false);
       } else {
         // IF THIS IS ERROR ALERT/SHOW THE ERROR MSG
@@ -33,18 +37,18 @@ const ModalAddStudents = ({ itemEdit, setIsOpen }) => {
       }
 
       //   THIS IS TO REFETCH THE DATA AFTER UPDATE OR CREATE
-      queryClient.invalidateQueries(["students"]);
+      queryClient.invalidateQueries({ queryKey: ["students"] });
     },
   });
 
   // THIS IS FOR THE INITIAL VALUES IN THE MODAL
   const initVal = {
-    students_id: "",
-    students_first_name: "",
-    students_middle_name: "",
-    students_last_name: "",
-    students_grade: "",
-    students_section: "",
+    students_id: itemEdit ? itemEdit.students_id : "",
+    students_first_name: itemEdit ? itemEdit.students_first_name : "",
+    students_middle_name: itemEdit ? itemEdit.students_middle_name : "",
+    students_last_name: itemEdit ? itemEdit.students_last_name : "",
+    students_grade: itemEdit ? itemEdit.students_grade : "",
+    students_section: itemEdit ? itemEdit.students_section : "",
   };
 
   // THIS CODE IS FOR VALIDATION IN THE FORM FIELD
@@ -78,7 +82,9 @@ const ModalAddStudents = ({ itemEdit, setIsOpen }) => {
     <>
       <ModalWrapperSide handleClose={handleClose} className={`${animate}`}>
         <div className="flex justify-between mb-4 px-3 pt-2">
-          <h3 className="text-black/80 font-medium text-sm">Add Student</h3>
+          <h3 className="text-black/80 font-medium text-sm">
+            {itemEdit ? "Update" : "Add"} Student
+          </h3>
           <button
             className=" text-black/50 cursor-pointer"
             type="button"
@@ -152,7 +158,13 @@ const ModalAddStudents = ({ itemEdit, setIsOpen }) => {
                         disabled={mutation.isPending || !props.dirty}
                         className="btn-modal-submit"
                       >
-                        Add
+                        {mutation.isPending ? (
+                          <ButtonSpinner />
+                        ) : itemEdit ? (
+                          "Save"
+                        ) : (
+                          "Add"
+                        )}
                       </button>
                       <button
                         type="reset"

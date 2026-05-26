@@ -10,9 +10,28 @@ require_once "../../../models/developer/students/Students.php";
 $body = file_get_contents("php://input");
 $data = json_decode($body, true);
 
-// POST == CREATE A RECORD
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $result = require 'create.php';
-    sendResponse($result);
-    exit();
+// HTTP AUTHORIZATION IS THE FIRST LAYER OF SECURITY OF OUR WEB APP
+if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    // POST == CREATE A RECORD
+    if ($_SERVER['REQUEST_METHOD'] == "POST") {
+        $result = require 'create.php';
+        sendResponse($result);
+        exit;
+    }
+    // GET == RETRIEVE A RECORD
+    if ($_SERVER['REQUEST_METHOD'] == "GET") {
+        $result = require 'read.php';
+        sendResponse($result);
+        exit;
+    }
+    // PUT == UPDATE A RECORD
+    if ($_SERVER['REQUEST_METHOD'] == "PUT") {
+        $result = require 'update.php';
+        sendResponse($result);
+        exit;
+    }
 }
+
+// THIS IS TO PREVENT WHITE PAGE
+http_response_code(200);
+checkAccess();

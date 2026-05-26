@@ -39,7 +39,12 @@ const Students = () => {
               </div>
               {/* Table */}
               <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <StudentsTable students={students} />
+                <StudentsTable
+                  students={students}
+                  setIsOpen={setIsOpen}
+                  setItemEdit={setItemEdit}
+                  itemEdit={itemEdit}
+                />
               </div>
             </div>
           </>

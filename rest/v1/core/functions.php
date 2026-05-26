@@ -66,24 +66,24 @@ function returnSuccess($object, $name, $query, $data = null)
     $returnData = [];
     $returnData['data'] = $data;
     $returnData['count'] = $query->rowCount();
-    $returnData["{$name} ID"] = $object->lastInsertedId();
+    $returnData["{$name} ID"] = $object->lastInsertedId;
     $returnData['success'] = true;
     $returnData['server_date'] = date("Y-m-d");
     $response->setData($returnData);
     $response->send();
-    exit();
+    exit;
 }
 
 // THIS FUNCTION WILL RETRIEVE ALL DATA
 function getResultData($query)
 {
-    $data = $query->fetchAll();
+    $data = $query->fetchAll(PDO::FETCH_ASSOC);
     return $data;
 }
 
 
 // THIS FUNCTION IS TO RETRIEVE THE DATA FROM MODELS
-function getQueryData($query)
+function getQueriedData($query)
 {
     $response = new Response();
     $returnData = [];
@@ -110,7 +110,7 @@ function returnHandleError($msg, $error_message = 'Mali ka pogi', $error_descrip
     $error['error_code'] = $error_code;
     $response->setData($error);
     $response->send();
-    exit();
+    exit;
 }
 
 function sendResponse($result)
@@ -120,4 +120,21 @@ function sendResponse($result)
     $response->setStatusCode(200);
     $response->setData($result);
     $response->send();
+}
+
+function checkAccess()
+{
+    returnHandleError('Forbidden Access', 'Invalid Request', '', '401');
+}
+
+function checkEndpoint()
+{
+    returnHandleError('Endpoint Not Found.', 'Invalid Request', '', '404');
+}
+
+function checkId($id)
+{
+    if (!$id || !is_numeric($id)) {
+        returnHandleError('Invalid ID', 'Invalid Request', '', '402');
+    }
 }
