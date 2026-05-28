@@ -180,13 +180,13 @@
   label.error-show {
     @apply text-red-500;
   }
-  .tooltip-action-table {
+  .tooltip-action {
     @apply relative p-1 bg-transparent leading-none;
   }
-  .tooltip-action-table::after {
+  .tooltip-action::after {
     @apply content-[attr(data-tooltip)] z-51! absolute -translate-x-2/4 bottom-full -top-[24px] bg-dark/80 text-white p-1 rounded-sm h-fit leading-none whitespace-nowrap text-center opacity-0 text-[10px] pointer-events-none transition ease-linear scale-0 duration-75 left-1/2;
   }
-  .tooltip-action-table:hover::after {
+  .tooltip-action:hover::after {
     @apply opacity-100 scale-100;
   }
   button {

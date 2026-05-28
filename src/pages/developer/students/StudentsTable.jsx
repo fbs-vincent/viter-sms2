@@ -1,14 +1,23 @@
+import React from "react";
 // src/components/students/StudentsTable.jsx
 // import ResponsiveTable from "../ui/ResponsiveTable";
-import { FaEdit, FaTrash, FaUser } from "react-icons/fa";
-import ResponsiveTable from "../ResponsiveTable";
+import {
+  FaArchive,
+  FaEdit,
+  FaTrash,
+  FaTrashRestore,
+  FaUser,
+} from "react-icons/fa";
 import useQueryData from "../../../functions/custom-hooks/useQueryData";
-import { apiVersion } from "../../../functions/functions-general";
-
-const handleUpdate = (setIsOpen, setItemEdit, item) => {
-  setIsOpen(true);
-  setItemEdit(item);
-};
+import { apiVersion, handleAction } from "../../../functions/functions-general";
+import {
+  setIsAdd,
+  setIsArchive,
+  setIsDelete,
+  setIsRestore,
+} from "../../../store/StoreAction";
+import { StoreContext } from "../../../store/StoreContext";
+import ResponsiveTable from "../ResponsiveTable";
 
 const studentColumns = [
   {
@@ -57,18 +66,65 @@ const studentColumns = [
     render: (student) => {
       return (
         <div className="flex gap-2">
-          <button
-            onClick={() =>
-              handleUpdate(student.setIsOpen, student.setItemEdit, student)
-            }
-            type="button"
-            className="cursor-pointer text-blue-600 hover:text-blue-800"
-          >
-            <FaEdit />
-          </button>
-          <button className="cursor-pointer text-red-600 hover:text-red-800">
-            <FaTrash />
-          </button>
+          {student.students_is_active ? (
+            <>
+              <button
+                onClick={() =>
+                  handleAction(student.setIsAdd, student.setItemEdit, student)
+                }
+                type="button"
+                className="cursor-pointer text-blue-600 hover:text-blue-800 tooltip-action"
+                data-tooltip="Edit"
+              >
+                <FaEdit />
+              </button>
+              <button
+                onClick={() =>
+                  handleAction(
+                    student.setIsArchive,
+                    student.setItemEdit,
+                    student,
+                  )
+                }
+                type="button"
+                className="cursor-pointer text-orange-600 hover:text-orange-800 tooltip-action"
+                data-tooltip="Archive"
+              >
+                <FaArchive />
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() =>
+                  handleAction(
+                    student.setIsRestore,
+                    student.setItemEdit,
+                    student,
+                  )
+                }
+                type="button"
+                className="cursor-pointer text-orange-600 hover:text-orange-800 tooltip-action"
+                data-tooltip="Restore"
+              >
+                <FaTrashRestore />
+              </button>
+              <button
+                onClick={() =>
+                  handleAction(
+                    student.setIsDelete,
+                    student.setItemEdit,
+                    student,
+                  )
+                }
+                type="button"
+                className="cursor-pointer text-red-600 hover:text-red-800 tooltip-action"
+                data-tooltip="Delete"
+              >
+                <FaTrash />
+              </button>
+            </>
+          )}
         </div>
       );
     },
@@ -76,7 +132,9 @@ const studentColumns = [
   },
 ];
 
-const StudentsTable = ({ students, setIsOpen, setItemEdit, itemEdit }) => {
+const StudentsTable = ({ setItemEdit, itemEdit }) => {
+  const { store, dispatch } = React.useContext(StoreContext);
+
   const {
     isLoading: isLoadingStudents,
     isFetching: isFetchingStudents,
@@ -97,8 +155,11 @@ const StudentsTable = ({ students, setIsOpen, setItemEdit, itemEdit }) => {
         studentId: `${item.students_id}`,
         gradeSection: `${item.students_grade} - ${item.students_section}`,
         status: item.students_is_active ? "Active" : "Inactive",
-        setIsOpen,
         setItemEdit,
+        setIsAdd: (val) => dispatch(setIsAdd(val)),
+        setIsArchive: (val) => dispatch(setIsArchive(val)),
+        setIsRestore: (val) => dispatch(setIsRestore(val)),
+        setIsDelete: (val) => dispatch(setIsDelete(val)),
       };
     }) ?? [];
 
@@ -107,9 +168,12 @@ const StudentsTable = ({ students, setIsOpen, setItemEdit, itemEdit }) => {
       isLoading={isLoadingStudents}
       isFetching={isFetchingStudents}
       error={errorStudents}
-      // data={students}
       data={studentArray}
       columns={studentColumns}
+      dataItem={itemEdit}
+      // queryKey="students" // FOR ONE RECORDS REFETCHING
+      queryKey={["students"]} // FOR MULTIPLE RECORDS REFETCHING
+      pathUrl={`/controllers/developer/students`} // this is for archive, restore, delete path api
     />
   );
 };

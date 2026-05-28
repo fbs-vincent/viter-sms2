@@ -71,3 +71,10 @@ export const GetFocus = (id) => {
     obj.focus();
   }, []);
 };
+
+// handle delete, restore, archive
+export const handleAction = (setIsOpen, setItemEdit, item) => {
+  // dispatch(setIsOpen(true)); // ✅ open modal via context
+  setIsOpen(true);
+  setItemEdit(item);
+};

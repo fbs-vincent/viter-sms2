@@ -1,9 +1,12 @@
 import React from "react";
 import Navigation from "../../partials/Navigation";
 import { navList } from "./nav-function";
+import { StoreContext } from "@/store/StoreContext";
+import ModalSuccess from "@/partials/modal/ModalSuccess";
 // import { navList } from "../nav-function";
 
 const Layout = ({ children, menu = "", submenu = "" }) => {
+  const { store, dispatch } = React.useContext(StoreContext);
   const [isOpen, setIsOpen] = React.useState(false);
 
   const isMobile = () => window.innerWidth < 1024;
@@ -51,6 +54,8 @@ const Layout = ({ children, menu = "", submenu = "" }) => {
             : children}
         </main>
       </section>
+
+      {store.isSuccess && <ModalSuccess />}
     </>
   );
 };
